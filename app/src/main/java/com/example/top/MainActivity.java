@@ -1,20 +1,23 @@
 package com.example.top;
 
+import android.content.Intent;
 import android.os.Bundle;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import java.util.ArrayList;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity implements OnItemClickListener{
+public class MainActivity extends AppCompatActivity implements OnItemClickListener {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -23,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
     @BindView(R.id.containerMain)
     CoordinatorLayout containerMain;
 
-    private ArtistaAdapter artistaAdapter;
+    private ArtistaAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,12 +45,12 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
     }
 
     private void configAdapter() {
-        artistaAdapter = new ArtistaAdapter(new ArrayList<Artista>(), this);
+        adapter = new ArtistaAdapter(new ArrayList<Artista>(), this);
     }
 
     private void configRecyclerView() {
         recyclerview.setLayoutManager(new LinearLayoutManager(this));
-        recyclerview.setAdapter(artistaAdapter);
+        recyclerview.setAdapter(adapter);
     }
 
     private void generateArtist() {
@@ -67,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         for (int i = 0; i < 4; i++) {
             Artista artista = new Artista(i + 1, nombres[i], apellidos[i], nacimientos[i], lugares[i],
                     estaturas[i], notas[i], i + 1, fotos[i]);
-            artistaAdapter.add(artista);
+            adapter.add(artista);
         }
     }
 
@@ -102,5 +105,22 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
     @Override
     public void onLongItemClick(Artista artista) {
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK && requestCode == 1){
+
+        }
+    }
+
+    @OnClick(R.id.fab)
+    public void addArtist() {
+        Intent intent = new Intent(MainActivity.this, AddArtistActivity.class);
+        intent.putExtra(Artista.ORDEN, adapter.getItemCount()+1);
+        //startActivity(intent);
+        startActivityForResult(intent, 1);
     }
 }
